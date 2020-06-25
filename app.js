@@ -32,6 +32,13 @@ app.get('/contact', function(req, res){
   res.render('contact', {contactInfo:contactContent});
 });
 
+// Compose Page
+
+app.get('/compose', function(req, res){
+  res.render('compose');
+
+});
+
 
 
 
