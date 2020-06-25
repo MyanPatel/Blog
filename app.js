@@ -15,14 +15,22 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-
+// Home Page
 app.get('/', function(req, res){
   res.render('home', {homeInfo:homeStartingContent});
   
 });
 
+// About page
+app.get('/about', function(req, res){
+  res.render('about', {aboutInfo:aboutContent});
+});
 
 
+// Contact Page
+app.get('/contact', function(req, res){
+  res.render('contact', {contactInfo:contactContent});
+});
 
 
 
