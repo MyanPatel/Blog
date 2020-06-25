@@ -3,6 +3,8 @@
 <h1>Home</h1>
 <p><%=homeInfo%></p>
 
-<% console.log(posts); %>
+<% for (var i = 0; i < posts.length; i++){%>
+    <%console.log(posts[i].title);%>
+    <%}%>
 
 <%- include('partials/footer'); -%>
