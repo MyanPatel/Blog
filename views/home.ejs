@@ -3,6 +3,10 @@
 <h1>Home</h1>
 <p><%=homeInfo%></p>
 
-<% posts.forEach(element => console.log(element.title));%>
+<% posts.forEach(function(item){ %>
+    <h2><%=item.title%></h2>
+    <p><%=item.content%></p>
+<%}) %>
+
 
 <%- include('partials/footer'); -%>
