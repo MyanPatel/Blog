@@ -19,10 +19,10 @@ var posts = [];
 
 // Home Page
 app.get('/', function(req, res){
-  res.render('home', {homeInfo: homeStartingContent});
-  console.log(posts);
-
-  
+  res.render('home', {
+    homeInfo: homeStartingContent,
+    posts: posts
+  });
 });
 
 // About page
