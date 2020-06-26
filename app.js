@@ -72,7 +72,16 @@ app.post("/compose", function(req, res){
 app.get("/posts/:postTitle", function(req, res){
   // postTitle - in above URL is the parameter - specificied by the colon
   // req.params.parameterName = How you can access a specific parameter
-  console.log(req.params.postTitle);
+
+  // console.log(req.params.postTitle);
+
+  let requestedTitle = req.params.postTitle;
+  posts.forEach(function(post){
+    let storedTitle = post.title;
+    if (storedTitle === requestedTitle){
+      console.log("Match Found!");
+    }
+  })
 });
 
 // Function needed to run the server on a specific port
