@@ -72,21 +72,27 @@ app.post("/compose", function(req, res){
 // Posts/'parameter' - Route Paramters = Feature of Express
 app.get("/posts/:postTitle", function(req, res){
   // postTitle - in above URL is the parameter - specificied by the colon
-  // req.params.parameterName = How you can access a specific parameter
+  // req.params.parameterName = To access a specific parameter
 
-  // console.log(req.params.postTitle);
-
+  // Storing the requested title by the user and applying the lowerCase() method using lodadsh
   let requestedTitle = _.lowerCase(req.params.postTitle);
+
+  // a for each loop to iterate through each element in the posts array
   posts.forEach(function(post){
+    // Storing the title of each post and applying the lowerCase() method using lodadsh
     let storedTitle = _.lowerCase(post.title);
+    // Performing a check to see if the requested title matches a title stored in the posts array
     if (storedTitle === requestedTitle){
       console.log("Match Found!");
+      // True branch: Render the posts.ejs file and pass the post title and post content to the ejs page
+      // This allows each blog post to be viewed on its own page
       res.render('post', {postTitle: post.title, postContents: post.content});
     }
   })
 });
 
-// Function needed to run the server on a specific port
+// Function to run a local server on a specific port
 app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
+
