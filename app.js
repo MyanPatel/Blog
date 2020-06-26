@@ -68,6 +68,13 @@ app.post("/compose", function(req, res){
   res.redirect('/');
 });
 
+// Posts/'parameter' - Route Paramters = Feature of Express
+app.get("/posts/:postTitle", function(req, res){
+  // postTitle - in above URL is the parameter - specificied by the colon
+  // req.params.parameterName = How you can access a specific parameter
+  console.log(req.params.postTitle);
+});
+
 // Function needed to run the server on a specific port
 app.listen(3000, function() {
   console.log("Server started on port 3000");
