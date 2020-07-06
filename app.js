@@ -5,6 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
+const mongoose = require('mongoose');
 
 // Some sample content to put on the Home, About and Contact pages
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -24,15 +25,33 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 // Global variable to store each blog post
-var posts = [];
+// var posts = [];
+
+// Creating a connection to the mongoDB server - Locally hosted
+mongoose.connect("mongodb://localhost:27017/BlogDB", {useNewUrlParser:true});
+
+// Creating a schema to store posts
+const postsSchema = new mongoose.Schema ({
+  title: String,
+  post: String
+});
+
+// Creating a new model from the above schema
+const Post = new mongoose.model("Post", postsSchema);
+
 
 // Home Page - GET
 app.get('/', function(req, res){
   // res.render('name of .ejs page', {variable on .ejs page, variable in app.js});
-  res.render('home', {
-    homeInfo: homeStartingContent,
-    posts: posts
-  });
+
+  Post.find({}, function(err, posts){
+
+    res.render("home", {
+      homeInfo: homeStartingContent,
+      posts: posts
+ 
+    });
+  })
 });
 
 // About page - GET
@@ -58,37 +77,59 @@ app.post("/compose", function(req, res){
   let titleContent  = req.body.titleContent;
 
   // A JavaScript object to store both the each blog posts title and content
-  const blogPost = {
+  const post = new Post ({
     title: titleContent,
-    content: postContent
-  };
+    post: postContent
+  });
+
+  post.save(function(err){
+    if (!err){
+      console.log("Post saved successfully!");
+      res.redirect('/');
+    }else{
+      console.log(err);
+    }
+  });
 
   // Once published, the blog post is addded to the 'posts' global variable
-  posts.push(blogPost);
+  // posts.push(blogPost);
   // The user is redirected to the root route or Home screen
-  res.redirect('/');
 });
 
 // Posts/'parameter' - Route Paramters = Feature of Express
-app.get("/posts/:postTitle", function(req, res){
+app.get("/posts/:postId", function(req, res){
   // postTitle - in above URL is the parameter - specificied by the colon
   // req.params.parameterName = To access a specific parameter
 
   // Storing the requested title by the user and applying the lowerCase() method using lodadsh
-  let requestedTitle = _.lowerCase(req.params.postTitle);
+  // let requestedTitle = _.lowerCase(req.params.postTitle);
+
+  const requestedPostId = req.params.postId;
+
+  Post.findOne({_id: requestedPostId}, function(err, post){
+
+    if (!err){
+      res.render("post", {
+        postTitle: post.title,
+        postContents: post.post
+      });
+    }else{
+      console.log(err);
+    }
+  });
 
   // a for each loop to iterate through each element in the posts array
-  posts.forEach(function(post){
-    // Storing the title of each post and applying the lowerCase() method using lodadsh
-    let storedTitle = _.lowerCase(post.title);
-    // Performing a check to see if the requested title matches a title stored in the posts array
-    if (storedTitle === requestedTitle){
-      console.log("Match Found!");
-      // True branch: Render the posts.ejs file and pass the post title and post content to the ejs page
-      // This allows each blog post to be viewed on its own page
-      res.render('post', {postTitle: post.title, postContents: post.content});
-    }
-  })
+  // posts.forEach(function(post){
+  //   // Storing the title of each post and applying the lowerCase() method using lodadsh
+  //   let storedTitle = _.lowerCase(post.title);
+  //   // Performing a check to see if the requested title matches a title stored in the posts array
+  //   if (storedTitle === requestedTitle){
+  //     console.log("Match Found!");
+  //     // True branch: Render the posts.ejs file and pass the post title and post content to the ejs page
+  //     // This allows each blog post to be viewed on its own page
+  //     res.render('post', {postTitle: post.title, postContents: post.content});
+  //   }
+  // })
 });
 
 // Function to run a local server on a specific port
